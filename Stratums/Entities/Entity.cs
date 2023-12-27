@@ -22,16 +22,21 @@ namespace Stratums.Entities
         SpriteBatch _spriteBatch;
         private readonly List<Property> _properties;
 
-        private EntityData _entityData;
+        public EntityData _entityData;
 
-        public List<Hitbox> GetHitboxes() { return _entityData.Hitboxes; }
-        public Vector2 GetPosition() { return _entityData.Position; }
+        public bool IsCollidable { get; private set; }
+
+        public EntityData GetEntityData() => _entityData;
+        public List<Hitbox> GetHitboxes() => _entityData.Hitboxes;
+        public Vector2 GetPosition() => _entityData.Position;
 
         public Entity(ContentManager contentManager, SpriteBatch spriteBatch)
         {
             _contentManager = contentManager;
             _spriteBatch = spriteBatch;
             _properties = new List<Property>();
+
+            IsCollidable = false;
 
             _entityData.HostEntity = this;
             _entityData.SpriteEffects = SpriteEffects.None;
@@ -46,6 +51,11 @@ namespace Stratums.Entities
             {
                 property.OnUpdate(deltaTime, entityBatch, ref _entityData);
             }
+        }
+
+        public void PositionUpdate(GameTime deltaTime, EntityBatch entityBatch)
+        {
+            
         }
 
         public void Draw(Vector2 camera)
@@ -125,7 +135,7 @@ namespace Stratums.Entities
         }
         public Entity AddCollider()
         {
-            _properties.Add(new Collider());
+            IsCollidable = true;
 
             return this;
         }

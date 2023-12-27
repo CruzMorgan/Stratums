@@ -74,7 +74,7 @@ namespace Stratums.Properties
             if (_debugMode)
             {
                 //Debug.Assert(_parentEntity.TestForCollision(entities));
-                if (entityData.HostEntity.IsEntityColliding(entityBatch.GetComparableEntities(entityData.HostEntity)))
+                if (entityData.HostEntity.IsEntityColliding(entityBatch.Entities))
                 {
                     _color = Color.Red;
                     _renderData = GetHitboxRenderData();

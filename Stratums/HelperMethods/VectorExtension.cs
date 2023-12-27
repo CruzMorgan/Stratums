@@ -22,6 +22,11 @@ namespace Stratums.HelperMethods
 
             return (float)Math.Atan2(-relativeCoordinate.Y, relativeCoordinate.X);
         }
+        
+        public static float GetAngleFromVector(this Vector2 vector)
+        {
+            return (float)Math.Atan2(vector.Y, vector.X);
+        }
 
         public static float Atan2(this Vector2 current)
         {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Stratums.HelperMethods;
+using Stratums.Entities;
 using Stratums.Properties;
 using System;
 using System.Collections.Concurrent;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stratums.Entities
+namespace Stratums.HelperMethods
 {
     public static class EntityPartition
     {
@@ -20,7 +20,7 @@ namespace Stratums.Entities
         {
             var entityPartitionIndexes = new List<Vector2>();
 
-            foreach(var hitbox in entity.GetHitboxes())
+            foreach (var hitbox in entity.GetHitboxes())
             {
                 var hitboxPartitionIndexes = hitbox.CalculatePartitionIndexes(partitionSize, entity.GetPosition());
                 //Debug.Assert(hitboxPartitionIndexes.Count != 1);
@@ -39,10 +39,10 @@ namespace Stratums.Entities
                 }
 
                 for (int x = (int)minX; x <= (int)maxX; x++)
-                for (int y = (int)minY; y <= (int)maxY; y++)
-                {
-                    entityPartitionIndexes.Add(new Vector2(x, y));
-                }
+                    for (int y = (int)minY; y <= (int)maxY; y++)
+                    {
+                        entityPartitionIndexes.Add(new Vector2(x, y));
+                    }
             }
             return entityPartitionIndexes;
         }

@@ -37,7 +37,7 @@ namespace Stratums
         {
             // TODO: Add your initialization logic here
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _entityBatch = new EntityBatch(1000);
+            _entityBatch = new EntityBatch();
 
             TextureMetadata.GetInstance().Load();
 
@@ -50,7 +50,7 @@ namespace Stratums
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             
-            int count = 20;
+            int count = 10;
             for (int x = 0; x <= count; x++)
             for (int y = 0; y <= count; y++)
             {

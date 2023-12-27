@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Stratums.HelperMethods
 {
-    public static class Collisions
+    public static class TestForEntityCollision
     {
         public static bool IsEntityColliding(this Entity current, List<Entity> entityList)
         {
@@ -68,7 +68,7 @@ namespace Stratums.HelperMethods
         {
             intersectionPoint = null;
 
-            return RadiiColliding(current, other, currentPos, otherPos) && IsInsideOfHitbox(current, other, currentPos, otherPos) && VerticesColliding(current.GetVertices(), other.GetVertices(), currentPos, otherPos, out intersectionPoint);
+            return RadiiColliding(current, other, currentPos, otherPos) && VerticesColliding(current.GetVertices(), other.GetVertices(), currentPos, otherPos, out intersectionPoint);
 
         }
 
@@ -78,13 +78,6 @@ namespace Stratums.HelperMethods
             var distanceBetweenCenters = VectorExtension.GetDistBetwCoords(current.GetCenter() + currentPos, other.GetCenter() + otherPos);
 
             return sumOfRadiusLengths >= distanceBetweenCenters;
-        }
-
-        private static bool IsInsideOfHitbox(Hitbox current, Hitbox other, Vector2 currentPos, Vector2 otherPos)
-        {
-            //When it becomes problematic, this can be used to implement a checker for if a hitbox is INSIDE of another hitbox without colliding lines
-
-            return true;
         }
 
         private static bool VerticesColliding(List<Vector2> current, List<Vector2> other, Vector2 currentPos, Vector2 otherPos, out Vector2? intersectionPoint)
@@ -163,16 +156,8 @@ namespace Stratums.HelperMethods
             {
                 var totalDistance = (currentGreatestValue - currentSmallestValue) + (otherGreatestValue - otherSmallestValue);
                 var rangeOfPoints = currentGreatestValue.GreatestValue(otherGreatestValue) - currentSmallestValue.SmallestValue(otherSmallestValue);
-                
-                if (totalDistance >= rangeOfPoints)
-                {
-                    //Debug.Assert(false);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+
+                return totalDistance >= rangeOfPoints;
             }
 
             //Makes sure the intersection point is within the edge x values of both lines

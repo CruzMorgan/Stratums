@@ -13,40 +13,31 @@ namespace Stratums.HelperMethods
 {
     public class EntityBatch
     {
-        private Dictionary<Entity, List<Vector2>> _entities;
-        private Dictionary<Vector2, List<Entity>> _partitions;
-        private int _partitionSize;
+        public List<Entity> Entities { get; }
+        public List<Entity> CollidableEntities { get; }
 
-        public List<Entity> GetEntities() { return _entities.Keys.ToList(); }
-        public Dictionary<Entity, List<Vector2>> GetEntitiesWithPartitions() { return _entities; }
-        public List<Vector2> GetPartitionsInEntity(Entity entity) { return _entities[entity]; }
         public EntityBatch()
         {
-            _entities = new Dictionary<Entity, List<Vector2>>();
-            _partitions = new Dictionary<Vector2, List<Entity>>();
-            _partitionSize = 100;
-        }
-        public EntityBatch(int partitionSize)
-        {
-            _entities = new Dictionary<Entity, List<Vector2>>();
-            _partitions = new Dictionary<Vector2, List<Entity>>();
-            _partitionSize = partitionSize;
+            Entities = new List<Entity>();
+            CollidableEntities = new List<Entity>();
         }
 
         public void Update(GameTime gameTime)
         {
-            foreach (Entity entity in _entities.Keys)
+            foreach (Entity entity in Entities)
             {
                 entity.Update(gameTime, this);
-                UpdateEntityPartitions(entity);
-
             }
 
+            foreach (Entity entity in CollidableEntities)
+            {
+                entity.PositionUpdate(gameTime, this);
+            }
         }
 
         public void Draw(Vector2 camera)
         {
-            foreach (Entity entity in _entities.Keys)
+            foreach (Entity entity in Entities)
             {
                 entity.Draw(camera);
             }
@@ -55,98 +46,18 @@ namespace Stratums.HelperMethods
         /// <summary> Declare "AddEntity()" in LoadContent() </summary>
         public void AddEntity(Entity entity)
         {
-            var partitionsInEntity = new Tuple<Entity, List<Vector2>>(entity, entity.CalculatePartitionIndexes(_partitionSize));
-            _entities.Add(partitionsInEntity.Item1, partitionsInEntity.Item2);
-            //Debug.Assert(false);
+            Entities.Add(entity);
 
-            foreach (var partitionIndex in partitionsInEntity.Item2)
+            if (entity.IsCollidable)
             {
-                switch (_partitions.ContainsKey(partitionIndex))
-                {
-                    case true:
-
-                        _partitions[partitionIndex].AddWithoutRepeats(entity);
-                        break;
-
-                    case false:
-
-                        _partitions.Add(partitionIndex, new List<Entity>());
-                        _partitions[partitionIndex].Add(entity);
-                        break;
-                }
+                CollidableEntities.Add(entity);
             }
         }
 
         public void RemoveEntity(Entity entity)
         {
-            _entities.Remove(entity);
-
-            foreach (var partitionIndex in entity.CalculatePartitionIndexes(_partitionSize))
-            {
-                _partitions[partitionIndex].Remove(entity);
-
-                if (_partitions[partitionIndex].Count == 0)
-                {
-                    _partitions.Remove(partitionIndex);
-                }
-
-            }
-
-        }
-
-        public void UpdateEntityPartitions(Entity entity)
-        {
-            var partitionIndexes = entity.CalculatePartitionIndexes(_partitionSize);
-
-            foreach (var partitionIndex in _entities[entity])
-            {
-                _partitions[partitionIndex].Remove(entity);
-
-                if (_partitions[partitionIndex].Count == 0)
-                {
-                    _partitions.Remove(partitionIndex);
-                }
-            }
-
-            _entities[entity] = partitionIndexes;
-
-            foreach (var partitionIndex in partitionIndexes)
-            {
-                switch (_partitions.ContainsKey(partitionIndex))
-                {
-                    case true:
-
-                        _partitions[partitionIndex].AddWithoutRepeats(entity);
-                        break;
-
-                    case false:
-
-                        _partitions.Add(partitionIndex, new List<Entity>());
-                        _partitions[partitionIndex].Add(entity);
-                        break;
-                }
-            }
-        }
-
-        public void TranslateEntityPartitions(this Entity entity, Vector2 translation)
-        {
-            for (int i = 0; i < _entities[entity].Count; i++)
-            {
-                _entities[entity][i] += new Vector2(translation.X, translation.Y);
-            }
-        }
-
-        public List<Entity> GetComparableEntities(Entity entity)
-        {
-            var partitions = _entities[entity];
-            var entities = new List<Entity>();
-
-            foreach (var partition in partitions)
-            {
-                entities.AddWithoutRepeats(_partitions[partition]);
-            }
-
-            return entities;
+            Entities.Remove(entity);
+            CollidableEntities.Remove(entity);
         }
     }
 }

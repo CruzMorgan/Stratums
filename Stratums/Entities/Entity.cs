@@ -24,14 +24,23 @@ namespace Stratums.Entities
 
         public EntityData _entityData;
 
+        private static int IDCounter = 000001;
+        public readonly int ID;
+
         public bool IsCollidable { get; private set; }
 
         public EntityData GetEntityData() => _entityData;
         public List<Hitbox> GetHitboxes() => _entityData.Hitboxes;
         public Vector2 GetPosition() => _entityData.Position;
 
+        //For debugging purposes:
+        private bool _isEntityColliding;
+
         public Entity(ContentManager contentManager, SpriteBatch spriteBatch)
         {
+            ID = IDCounter;
+            IDCounter++;
+
             _contentManager = contentManager;
             _spriteBatch = spriteBatch;
             _properties = new List<Property>();
@@ -40,9 +49,29 @@ namespace Stratums.Entities
 
             _entityData.HostEntity = this;
             _entityData.SpriteEffects = SpriteEffects.None;
-            _entityData.Position = new Vector2(0, 0);
+            _entityData.Position = Vector2.Zero;
             _entityData.Velocity = Vector2.Zero;
             _entityData.Hitboxes = new List<Hitbox>();
+
+            //For debugging purposes:
+            _isEntityColliding = false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || obj.GetType() != this.GetType()) 
+            {
+                return false;
+            }
+
+            Entity other = (Entity)obj;
+
+            return other.ID == this.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return ID;
         }
 
         public void Update(GameTime deltaTime, EntityBatch entityBatch)
@@ -51,6 +80,9 @@ namespace Stratums.Entities
             {
                 property.OnUpdate(deltaTime, entityBatch, ref _entityData);
             }
+
+            //For debugging purposes below:
+            _isEntityColliding = this.IsEntityColliding(entityBatch.CollidableEntities);
         }
 
         public void PositionUpdate(GameTime deltaTime, EntityBatch entityBatch)
@@ -61,30 +93,35 @@ namespace Stratums.Entities
         public void Draw(Vector2 camera)
         {
             foreach(var property in _properties)
+            foreach(var renderData in property.GetRenderData())
             {
-                foreach(var renderData in property.GetRenderData())
-                {
-                    var renderPosition = new Vector2
-                    (
-                        (float)Math.Round(_entityData.Position.X + renderData.DestinationRectangle.X), 
-                        (float)Math.Round(_entityData.Position.Y + -renderData.DestinationRectangle.Y)
-                    ).GetRelativeCoordinate(new Vector2(camera.X, -camera.Y));
+                var renderPosition = new Vector2
+                (
+                    (float)Math.Round(_entityData.Position.X + renderData.DestinationRectangle.X), 
+                    (float)Math.Round(_entityData.Position.Y + -renderData.DestinationRectangle.Y)
+                ).GetRelativeCoordinate(new Vector2(camera.X, -camera.Y));
 
-                    _spriteBatch.Draw
-                    (
-                        renderData.Texture,
-                        new Rectangle((int)renderPosition.X, -(int)renderPosition.Y, renderData.DestinationRectangle.Width, renderData.DestinationRectangle.Height),
-                        renderData.SourceRectangle,
-                        renderData.Color,
-                        renderData.Rotation,
-                        Vector2.Round(renderData.Origin),
-                        _entityData.SpriteEffects,
-                        0
-                    );
+                _spriteBatch.Draw
+                (
+                    renderData.Texture,
+                    new Rectangle((int)renderPosition.X, -(int)renderPosition.Y, renderData.DestinationRectangle.Width, renderData.DestinationRectangle.Height),
+                    renderData.SourceRectangle,
+                    renderData.Color,
+                    renderData.Rotation,
+                    Vector2.Round(renderData.Origin),
+                    _entityData.SpriteEffects,
+                    0
+                );
 
-                }
             }
 
+            //For debugging purposes below:
+            String print = "" + _isEntityColliding;
+
+            if (ID == 000001)
+            {
+                _spriteBatch.DrawString(Debugger.Font, print, Vector2.Zero, Color.White);
+            }
         }
 
         public Entity OverridePosition(float x, float y)

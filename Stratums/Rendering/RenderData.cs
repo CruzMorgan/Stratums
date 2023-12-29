@@ -11,7 +11,7 @@ namespace Stratums.Rendering
     public class RenderData
     {
         public Rectangle SourceRectangle { get; init; } = new Rectangle(0, 0, 100, 100);
-        public Texture2D Texture { get; init; } = Debugger.emptyTexture;
+        public Texture2D Texture { get; init; } = Debugger.EmptyTexture;
         public Rectangle DestinationRectangle { get; init; } = new Rectangle(0, 0, 100, 100);
         public float Rotation { get; init; } = 0f;
         public Vector2 Origin { get; init; } = Vector2.Zero;

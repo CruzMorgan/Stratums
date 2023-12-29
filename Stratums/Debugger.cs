@@ -11,13 +11,15 @@ namespace Stratums
 {
     public static class Debugger
     {
-        public static Texture2D debugTexture;
-        public static Texture2D emptyTexture;
+        public static Texture2D DebugTexture { get; private set; }
+        public static Texture2D EmptyTexture { get; private set; }
+        public static SpriteFont Font { get; private set; }
 
         public static void LoadContent(ContentManager content)
         {
-            debugTexture = content.Load<Texture2D>("WhitePixel");
-            emptyTexture = content.Load<Texture2D>("Empty");
+            DebugTexture = content.Load<Texture2D>("WhitePixel");
+            EmptyTexture = content.Load<Texture2D>("Empty");
+            Font = content.Load<SpriteFont>("Arial");
         }
     }
 }

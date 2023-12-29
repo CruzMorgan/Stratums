@@ -71,10 +71,10 @@ namespace Stratums.Properties
 
         public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
         {
-            if (_debugMode)
+            if (_debugMode && entityData.HostEntity.IsCollidable)
             {
                 //Debug.Assert(_parentEntity.TestForCollision(entities));
-                if (entityData.HostEntity.IsEntityColliding(entityBatch.Entities))
+                if (entityData.HostEntity.IsEntityColliding(entityBatch.CollidableEntities))
                 {
                     _color = Color.Red;
                     _renderData = GetHitboxRenderData();
@@ -100,11 +100,11 @@ namespace Stratums.Properties
                 //Gets the render data for each line in the polygon
                 fullhitbox[i] = new RenderData()
                 {
-                    Texture = Debugger.debugTexture,
+                    Texture = Debugger.DebugTexture,
 
-                    SourceRectangle = new Rectangle(0, 0, Debugger.debugTexture.Width, Debugger.debugTexture.Height),
+                    SourceRectangle = new Rectangle(0, 0, Debugger.DebugTexture.Width, Debugger.DebugTexture.Height),
 
-                    DestinationRectangle = new Rectangle((int)_vertices[i].X, -(int)_vertices[i].Y, Debugger.debugTexture.Width, distBetwCoords),
+                    DestinationRectangle = new Rectangle((int)_vertices[i].X, -(int)_vertices[i].Y, Debugger.DebugTexture.Width, distBetwCoords),
 
                     Rotation = _vertices[i].GetAngleFromCoord(_vertices[nextVertex]) + (float)Math.PI / 2f,
 
@@ -117,11 +117,11 @@ namespace Stratums.Properties
             //Gets the render data for the radius line
             fullhitbox[_vertices.Count] = new RenderData()
             {
-                Texture = Debugger.debugTexture,
+                Texture = Debugger.DebugTexture,
 
-                SourceRectangle = new Rectangle(0, 0, Debugger.debugTexture.Width, Debugger.debugTexture.Height),
+                SourceRectangle = new Rectangle(0, 0, Debugger.DebugTexture.Width, Debugger.DebugTexture.Height),
 
-                DestinationRectangle = new Rectangle((int)_centerOfHitbox.X, -(int)_centerOfHitbox.Y, Debugger.debugTexture.Width, (int)_centerOfHitbox.GetDistBetwCoords(_vertices[_radiusIndex])),
+                DestinationRectangle = new Rectangle((int)_centerOfHitbox.X, -(int)_centerOfHitbox.Y, Debugger.DebugTexture.Width, (int)_centerOfHitbox.GetDistBetwCoords(_vertices[_radiusIndex])),
 
                 Rotation = _centerOfHitbox.GetAngleFromCoord(_vertices[_radiusIndex]) + (float)Math.PI / 2f,
 

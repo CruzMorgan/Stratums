@@ -25,6 +25,13 @@
 /processorParam:TextureFormat=Color
 /build:Empty.png
 
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;Arial.spritefont
+
 #begin Magic_Dog_Run.png
 /importer:TextureImporter
 /processor:TextureProcessor

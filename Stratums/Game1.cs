@@ -49,10 +49,17 @@ namespace Stratums
             Debugger.LoadContent(Content);
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            
-            int count = 10;
-            for (int x = 0; x <= count; x++)
-            for (int y = 0; y <= count; y++)
+
+            _dog = new Entity(Content, _spriteBatch)
+                .AddInertia()
+                .AddAnimation("Magic_Dog_Run")
+                .AddHitbox(100, 100, true)
+                .AddCollider()
+                ;
+
+            int count = 1000;
+            for (int x = 1; x <= (int)Math.Sqrt(count); x++)
+            for (int y = 1; y <= (int)Math.Sqrt(count); y++)
             {
                 _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
                     .AddAnimation("WhitePixel")
@@ -61,12 +68,6 @@ namespace Stratums
                     );
             }
 
-            _dog = new Entity(Content, _spriteBatch)
-                .AddInertia()
-                .AddAnimation("Magic_Dog_Run")
-                .AddHitbox(100, 100, true)
-                .AddCollider()
-                ;
             _entityBatch.AddEntity( _dog );
 
             _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
@@ -74,16 +75,19 @@ namespace Stratums
                 .AddInertia()
                 .OverridePosition(-300, -50)
                 .AddHitbox(100, 100, true)
+                .AddCollider()
                 );
 
             _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
                 .OverridePosition(200, 40)
                 .AddHitbox(new List<Vector2>() { new Vector2 (30, 40), new Vector2 (-56, 105), new Vector2(-103, -10), new Vector2(73, -150)}, true)
+                .AddCollider()
                 );
 
             _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
                 .OverridePosition(10, 400)
                 .AddHitbox(300, 500, true)
+                .AddCollider()
                 );
 
 

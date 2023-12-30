@@ -18,14 +18,15 @@ namespace Stratums.Entities
 {
     public class Entity
     {
+        private static int IDCounter = 000001;
+        public readonly int ID;
+
         ContentManager _contentManager;
         SpriteBatch _spriteBatch;
         private readonly List<Property> _properties;
 
         public EntityData _entityData;
 
-        private static int IDCounter = 000001;
-        public readonly int ID;
 
         public bool IsCollidable { get; private set; }
 
@@ -34,7 +35,7 @@ namespace Stratums.Entities
         public Vector2 GetPosition() => _entityData.Position;
 
         //For debugging purposes:
-        private bool _isEntityColliding;
+        private List<EntityCollisionData> _entityCollisionDatas;
 
         public Entity(ContentManager contentManager, SpriteBatch spriteBatch)
         {
@@ -45,16 +46,16 @@ namespace Stratums.Entities
             _spriteBatch = spriteBatch;
             _properties = new List<Property>();
 
-            IsCollidable = false;
-
             _entityData.HostEntity = this;
             _entityData.SpriteEffects = SpriteEffects.None;
             _entityData.Position = Vector2.Zero;
             _entityData.Velocity = Vector2.Zero;
             _entityData.Hitboxes = new List<Hitbox>();
 
+            IsCollidable = false;
+
             //For debugging purposes:
-            _isEntityColliding = false;
+
         }
 
         public override bool Equals(object obj)
@@ -82,7 +83,7 @@ namespace Stratums.Entities
             }
 
             //For debugging purposes below:
-            _isEntityColliding = this.IsEntityColliding(entityBatch.CollidableEntities);
+            _entityCollisionDatas = this.CalculateEntityCollisions(entityBatch.CollidableEntities);
         }
 
         public void PositionUpdate(GameTime deltaTime, EntityBatch entityBatch)
@@ -116,7 +117,7 @@ namespace Stratums.Entities
             }
 
             //For debugging purposes below:
-            String print = "" + _isEntityColliding;
+            string print = "" + _entityCollisionDatas.Count;
 
             if (ID == 000001)
             {
@@ -129,13 +130,24 @@ namespace Stratums.Entities
             _entityData.Position = new Vector2(x, y);
             return this;
         }
-        public Entity OverrideVelocity(float x, float y)
+        public Entity OverridePosition(Vector2 vector)
+        {
+            _entityData.Position = vector;
+            return this;
+        }
+
+        public Entity OverrideTranslatePosition(float x, float y)
         {
             _entityData.Position += new Vector2(x, y);
             return this;
         }
+        public Entity OverrideTranslatePosition(Vector2 vector)
+        {
+            _entityData.Position += vector;
+            return this;
+        }
 
-        //EACH ADDPROPERTY METHOD BELOW
+        //EACH ADD{{PROPERTY}} METHOD BELOW
 
         public Entity AddInertia()
         {

@@ -23,16 +23,12 @@ namespace Stratums.Entities
         {
             IntersectionPoints = new List<Vector2>();
             OverlappingLines = new List<Tuple<Vector2, Vector2>>();
-        }
 
-        public override string ToString()
-        {
-            return $"{{ IntersectionPoints: {IntersectionPoints}, OverlappingLines: {OverlappingLines} }}";
         }
 
         public bool IsThereCollisionData()
         {
-            return IntersectionPoints.Count != 0 && OverlappingLines.Count != 0;
+            return IntersectionPoints.Count != 0 || OverlappingLines.Count != 0;
         }
     }
 }

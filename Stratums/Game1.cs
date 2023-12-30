@@ -107,10 +107,10 @@ namespace Stratums
             if (Keyboard.GetState().IsKeyDown(Keys.Left)) { _camera += new Vector2(-cameraSpeed, 0); }
             if (Keyboard.GetState().IsKeyDown(Keys.Down)) { _camera += new Vector2(0, cameraSpeed); }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) { _dog.OverrideVelocity(0, speed); }
-            if (Keyboard.GetState().IsKeyDown(Keys.A)) { _dog.OverrideVelocity(-speed, 0); }
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) { _dog.OverrideVelocity(0, -speed); }
-            if (Keyboard.GetState().IsKeyDown(Keys.D)) { _dog.OverrideVelocity(speed, 0); }
+            if (Keyboard.GetState().IsKeyDown(Keys.W)) { _dog.OverrideTranslatePosition(0, speed); }
+            if (Keyboard.GetState().IsKeyDown(Keys.A)) { _dog.OverrideTranslatePosition(-speed, 0); }
+            if (Keyboard.GetState().IsKeyDown(Keys.S)) { _dog.OverrideTranslatePosition(0, -speed); }
+            if (Keyboard.GetState().IsKeyDown(Keys.D)) { _dog.OverrideTranslatePosition(speed, 0); }
 
             _entityBatch.Update(gameTime);
 

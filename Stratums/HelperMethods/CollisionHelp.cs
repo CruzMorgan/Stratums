@@ -20,9 +20,21 @@ namespace Stratums.HelperMethods
         /// </summary>
         /// <param name="collidingEntities">Entities that the current entity is currently colliding with.</param>
         /// <returns>A Vector that represents the position change needed to satisfy the collisions.</returns>
-        public static Vector2 FindNewPosition(List<Entity> collidingEntities)
+        public static Vector2 CalculatePositionPostColliding(this Entity current, Entity other)
         {
-            throw new NotImplementedException();
+            Vector2 moveTo = Vector2.Zero;
+
+            current.OverrideTranslatePosition(current.GetEntityData().Position);
+            other.OverrideTranslatePosition(other.GetEntityData().Position);
+
+            EntityCollisionData collisionData = current.CalculateEntityCollisions(other);
+
+            if (collisionData.IsThereCollisionData())
+            {
+                current.
+            }
+
+            return moveTo;
         }
     }
 }

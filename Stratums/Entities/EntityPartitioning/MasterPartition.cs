@@ -35,41 +35,37 @@ namespace Stratums.Entities.EntityPartitioning
 
             foreach (Point partitionIndex in partitionIndexes)
             {
-                if (!_partitions.ContainsKey(partitionIndex))
-                {
-                    CreatePartition(partitionIndex);
-                }
+                TryCreatePartition(partitionIndex);
 
                 _partitions[partitionIndex].InsertEntity(entity);
             }
 
         }
 
-        public bool RemoveEntity(Entity entity) 
+        public int RemoveEntity(Entity entity) 
         {
             IEnumerable<Point> partitionIndexes = CalculatePartitionIndexes(entity);
 
-            bool isEntityFound = false;
+            int numOfMissingEntities = 0;
 
             foreach(Point partitionIndex in partitionIndexes)
             {
                 if (!_partitions[partitionIndex].RemoveEntity(entity))
                 {
-                    isEntityFound = true;
+                    numOfMissingEntities++;
+                    //Debug.Assert(false);
                 }
 
-                if (_partitions[partitionIndex].GetAllEntities().Count == 0)
-                {
-                    _partitions.Remove(partitionIndex);
-                }
+                //TryRemovePartition(partitionIndex);
             }
 
-            return isEntityFound;
+            //Debug.Assert(numOfMissingEntities == 0);
+            return numOfMissingEntities;
         }
 
         public List<Entity> GetEntitiesInPartitionBranch(Entity entity)
         {
-            IEnumerable<Point> partitionIndexes = CalculatePartitionIndexes(entity);
+            List<Point> partitionIndexes = CalculatePartitionIndexes(entity).ToList();
 
             List<Entity> entities = new List<Entity>();
 
@@ -79,23 +75,35 @@ namespace Stratums.Entities.EntityPartitioning
                 entities.Add(subEntity);
             }
 
+
             return entities;
         }
 
-        private void CreatePartition(Point partitionIndex)
+        private void TryCreatePartition(Point partitionIndex)
         {
-            Vector2 minRange = (partitionIndex * _dimensions).ToVector2();
-            Vector2 maxRange = (partitionIndex * _dimensions + _dimensions).ToVector2();
+            if (!_partitions.ContainsKey(partitionIndex))
+            {
+                Vector2 minRange = (partitionIndex * _dimensions).ToVector2();
+                Vector2 maxRange = (partitionIndex * _dimensions + _dimensions).ToVector2();
 
-            PartitionBranch partition = new PartitionBranch(minRange, maxRange, 0, _proximityCap, _depthCap);
+                PartitionBranch partition = new PartitionBranch(minRange, maxRange, 0, _proximityCap, _depthCap);
 
-            _partitions.Add(partitionIndex, partition);
+                _partitions.Add(partitionIndex, partition);
+            }
+        }
+
+        private void TryRemovePartition(Point partitionIndex)
+        {
+            if (_partitions[partitionIndex].GetAllEntities().Count == 0)
+            {
+                _partitions.Remove(partitionIndex);
+            }
         }
 
         private IEnumerable<Point> CalculatePartitionIndexes(Entity entity)
         {
-            Point min = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item1.ToPoint() + entity.GetEntityData().Position.ToPoint());
-            Point max = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item2.ToPoint() + entity.GetEntityData().Position.ToPoint());
+            Point min = CalculatePartitionIndex((entity.GetEntityData().Hitbox.Range.Item1 + entity.GetEntityData().Position).ToPoint());
+            Point max = CalculatePartitionIndex((entity.GetEntityData().Hitbox.Range.Item2 + entity.GetEntityData().Position).ToPoint());
 
             if (max == min)
             {

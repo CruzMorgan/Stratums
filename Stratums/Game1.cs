@@ -32,6 +32,12 @@ namespace Stratums
 
             _camera = new Vector2(-300, -100);
 
+            // Disable fixed time step
+            IsFixedTimeStep = false;
+
+            // Disable vertical retrace synchronization
+            _graphics.SynchronizeWithVerticalRetrace = false;
+
         }
 
         protected override void Initialize()
@@ -63,15 +69,14 @@ namespace Stratums
                 ;
 
 
-            for (int x = 0; x < 50; x++)
-            for (int y = 0; y < 50; y++)
+            for (int x = -25; x < 25; x++)
+            for (int y = -25; y < 25; y++)
             {
                 _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                    .AddAnimation("test")
-                    .AddHitbox(Vector2.Zero, 100, 100)
-                    .OverridePosition(x * 99 - 50, y * 99)
-                    //.AddGravity()
-                    //.AddAirResistance()
+                    .AddAnimation("100x100Ball")
+                    .AddHitbox(Vector2.Zero, 50)
+                    .OverridePosition(x * 99, y * 99)
+                    .AddAirResistance()
                     .AddRandomMovement()
                     .AddFriction()
                     .AddDebugVisuals()
@@ -79,22 +84,6 @@ namespace Stratums
                     );
 
             }
-/*            for (int x = 0; x < 50; x++)
-            for (int y = 0; y < 50; y++)
-            {
-                _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                    .AddAnimation("100x100Ball")
-                    .AddHitbox(Vector2.Zero, 50)
-                    .OverridePosition(x * 99, y * 99)
-                    //.AddGravity()
-                    //.AddAirResistance()
-                    .AddRandomMovement()
-                    .AddFriction()
-                    .AddDebugVisuals()
-                    .AddInertia()
-                    );
-
-            }*/
 
             _entityBatch.AddEntity( _player );
             //_entityBatch.AddEntity(_object);

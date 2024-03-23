@@ -12,25 +12,13 @@ using System.Threading.Tasks;
 
 namespace Stratums.Properties.Hitbox
 {
-    public abstract class Hitbox : Property
+    public abstract class Hitbox
     {
-        protected abstract Vector2 LocalPosition { get; }
-        public abstract Vector2 GlobalPosition { get; protected set; } 
+        internal Vector2 _localPosition;
+        internal Vector2 _globalPosition;
+        public abstract Tuple<Vector2, Vector2> Range { get; init; }
 
         //NOTE: find if there is a way to not need the switch statement? Auto converting to correct hitboxes??
-        public bool IsHitboxColliding(Entity thisEntity, List<Entity> others)
-        {
-            foreach(Entity entity in others)
-            {
-                if (thisEntity != entity && IsHitboxColliding(entity._entityData.Hitboxes))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public bool IsHitboxColliding(List<Hitbox> others)
         {
             foreach (Hitbox other in others)
@@ -89,14 +77,9 @@ namespace Stratums.Properties.Hitbox
 
         public abstract double CalculateDistanceToEdge(float angle);
 
-        public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
+        public void OnUpdate(Vector2 entityPosition)
         {
-            GlobalPosition = entityData.Position + LocalPosition;
+            _globalPosition = entityPosition + _localPosition;
         }
-        public override IEnumerable<RenderData> GetRenderData()
-        {
-            return Array.Empty<RenderData>();
-        }
-
     }
 }

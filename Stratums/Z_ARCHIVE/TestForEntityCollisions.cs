@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Stratums.Entities;
-using Stratums.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,11 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using Stratums.Properties.Hitbox;
 
-namespace Stratums.HelperMethods
+namespace Stratums.Z_REMOVING
 {
+    /*
     public static class TestForEntityCollisions
     {
         public static bool IsEntityColliding(this Entity current, List<Entity> entityList)
@@ -261,4 +262,5 @@ namespace Stratums.HelperMethods
             return false;
         }
     }
+    */
 }

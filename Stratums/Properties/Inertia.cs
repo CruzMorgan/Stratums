@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stratums.Entities;
-using Stratums.HelperMethods;
+using Stratums.Entities.EntityPartitioning;
 using Stratums.Rendering;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,11 @@ namespace Stratums.Properties
 
         public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
         {
+            entityBatch.RemoveEntityOnlyFromPartitions(entityData.HostEntity);
+
             entityData.Position += new Vector2(entityData.Velocity.X, entityData.Velocity.Y) * (float)deltaTime.ElapsedGameTime.TotalSeconds;
+
+            entityBatch.AddEntityOnlyToPartitions(entityData.HostEntity);
         }
     }
 }

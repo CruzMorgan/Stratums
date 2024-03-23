@@ -1,10 +1,10 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stratums.HelperMethods
+namespace Stratums.Z_ARCHIVE
 {
     public static class FloatExtension
     {
@@ -14,7 +14,7 @@ namespace Stratums.HelperMethods
             {
                 return current;
             }
-            
+
             return other;
         }
 
@@ -29,3 +29,4 @@ namespace Stratums.HelperMethods
         }
     }
 }
+*/

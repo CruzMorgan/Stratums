@@ -12,10 +12,13 @@ namespace Stratums.Properties.Hitbox
 {
     public class RectangleHitbox : Hitbox
     {
-        public override Vector2 GlobalPosition { get; protected set; }
-        protected override Vector2 LocalPosition { get; }
         public float Width { get; }
         public float Height { get; }
+        public override Tuple<Vector2, Vector2> Range
+        {
+            get;
+            init;
+        }
 
         private float _lateralRadius;
         private float _longitudinalRadius;
@@ -24,9 +27,11 @@ namespace Stratums.Properties.Hitbox
 
         public RectangleHitbox(Vector2 localPosition, float width, float height)
         {
-            LocalPosition = localPosition;
+            _localPosition = localPosition;
             Width = width;
             Height = height;
+
+            Range = new Tuple<Vector2, Vector2>(_localPosition.AddToEach(-Width, -Height), _localPosition.AddToEach(Width, Height));
 
             _lateralRadius = Width / 2f;
             _longitudinalRadius = Height / 2f;
@@ -38,6 +43,7 @@ namespace Stratums.Properties.Hitbox
                 localPosition.X + _lateralRadius, 
                 localPosition.Y - _longitudinalRadius
             };
+
         }
 
         /// <summary>
@@ -48,10 +54,10 @@ namespace Stratums.Properties.Hitbox
         {
             return new float[]
             {
-                _sides[0] + GlobalPosition.X,
-                _sides[1] + GlobalPosition.Y,
-                _sides[2] + GlobalPosition.X,
-                _sides[3] + GlobalPosition.Y
+                _sides[0] + _globalPosition.X,
+                _sides[1] + _globalPosition.Y,
+                _sides[2] + _globalPosition.X,
+                _sides[3] + _globalPosition.Y
             };
         }
 
@@ -85,10 +91,10 @@ namespace Stratums.Properties.Hitbox
         public bool IsPointWithinHitbox(Vector2 point)
         {
             return 
-                point.X <= GlobalPosition.X + _lateralRadius &&
-                point.X >= GlobalPosition.X - _lateralRadius &&
-                point.Y <= GlobalPosition.Y + _longitudinalRadius &&
-                point.Y >= GlobalPosition.Y - _longitudinalRadius;
+                point.X <= _globalPosition.X + _lateralRadius &&
+                point.X >= _globalPosition.X - _lateralRadius &&
+                point.Y <= _globalPosition.Y + _longitudinalRadius &&
+                point.Y >= _globalPosition.Y - _longitudinalRadius;
         }
 
     }

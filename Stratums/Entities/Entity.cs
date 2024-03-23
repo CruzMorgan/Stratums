@@ -10,9 +10,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Stratums.Properties;
 using Stratums.Rendering;
-using Stratums;
-using Stratums.HelperMethods;
 using System.Runtime.CompilerServices;
+using Stratums.Properties.Hitbox;
+using Stratums.Entities.EntityPartitioning;
 
 namespace Stratums.Entities
 {
@@ -25,17 +25,9 @@ namespace Stratums.Entities
         SpriteBatch _spriteBatch;
         private readonly List<Property> _properties;
 
-        public EntityData _entityData;
+        private EntityData _entityData;
 
-
-        public bool IsCollidable { get; private set; }
-
-        public EntityData GetEntityData() => _entityData;
-        public List<Hitbox> GetHitboxes() => _entityData.Hitboxes;
-        public Vector2 GetPosition() => _entityData.Position;
-
-        //For debugging purposes:
-        private List<EntityCollisionData> _entityCollisionDatas;
+        public EntityData GetEntityData() { return _entityData; }
 
         public Entity(ContentManager contentManager, SpriteBatch spriteBatch)
         {
@@ -50,12 +42,9 @@ namespace Stratums.Entities
             _entityData.SpriteEffects = SpriteEffects.None;
             _entityData.Position = Vector2.Zero;
             _entityData.Velocity = Vector2.Zero;
-            _entityData.Hitboxes = new List<Hitbox>();
-
-            IsCollidable = false;
-
-            //For debugging purposes:
-
+            _entityData.Hitbox = new CircleHitbox(Vector2.Zero, 10);
+            _entityData.Color = Color.White;
+            _entityData.IsColliding = false;
         }
 
         public override bool Equals(object obj)
@@ -77,18 +66,16 @@ namespace Stratums.Entities
 
         public void Update(GameTime deltaTime, EntityBatch entityBatch)
         {
+            _entityData.IsColliding = IsColliding(entityBatch.CalculateAdjecentEntities(this));
+
+            Vector2 startPos = _entityData.Position;
+
             foreach (var property in _properties)
             {
                 property.OnUpdate(deltaTime, entityBatch, ref _entityData);
             }
 
-            //For debugging purposes below:
-            _entityCollisionDatas = this.CalculateEntityCollisions(entityBatch.CollidableEntities);
-        }
-
-        public void PositionUpdate(GameTime deltaTime, EntityBatch entityBatch)
-        {
-            
+            _entityData.Hitbox.OnUpdate(_entityData.Position);
         }
 
         public void Draw(Vector2 camera)
@@ -113,16 +100,28 @@ namespace Stratums.Entities
                     _entityData.SpriteEffects,
                     0
                 );
-
             }
+        }
 
-            //For debugging purposes below:
-            string print = "" + _entityCollisionDatas.Count;
-
-            if (ID == 000001)
+        public bool IsColliding()
+        {
+            return _entityData.IsColliding;
+        }
+        public bool IsColliding(Entity other)
+        {
+            return this._entityData.Hitbox.IsHitboxColliding(other._entityData.Hitbox);
+        }
+        public bool IsColliding(List<Entity> others)
+        {
+            foreach (Entity entity in others)
             {
-                _spriteBatch.DrawString(Debugger.Font, print, Vector2.Zero, Color.White);
+                if (this != entity && this._entityData.Hitbox.IsHitboxColliding(entity.GetEntityData().Hitbox))
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
         public Entity OverridePosition(float x, float y)
@@ -141,14 +140,13 @@ namespace Stratums.Entities
             _entityData.Position += new Vector2(x, y);
             return this;
         }
-        public Entity OverrideTranslatePosition(Vector2 vector)
+        public Entity InfluenceVelocity(float x, float y)
         {
-            _entityData.Position += vector;
+            _entityData.Velocity += new Vector2(x, y);
             return this;
         }
 
         //EACH ADD{{PROPERTY}} METHOD BELOW
-
         public Entity AddInertia()
         {
             _properties.Add(new Inertia());
@@ -164,33 +162,58 @@ namespace Stratums.Entities
             _properties.Add(new Gravity());
             return this;
         }
-        public Entity AddHitbox(List<Vector2> vertices, bool debugMode)
+        public Entity AddGravity(float gravitationalAcceleration)
         {
-            Hitbox hitbox = new Hitbox(vertices, debugMode);
-
-            _entityData.Hitboxes.Add(hitbox);
-            _properties.Add(hitbox);
+            _properties.Add(new Gravity(gravitationalAcceleration));
             return this;
         }
-        public Entity AddHitbox(int width, int height, bool debugMode)
+        public Entity AddHitbox(Vector2 localPosition, int radius)
         {
-            width /= 2;
-            height /= 2;
-            List<Vector2> vertices = new List<Vector2> { new Vector2(width, height), new Vector2(-width, height), new Vector2(-width, -height), new Vector2(width, -height) };
+            Hitbox hitbox = new CircleHitbox(localPosition, radius);
 
-            AddHitbox(vertices, debugMode);
-
+            _entityData.Hitbox = hitbox;
             return this;
         }
-        public Entity AddCollider()
+        public Entity AddHitbox(Vector2 localPosition, int width, int height)
         {
-            IsCollidable = true;
+            Hitbox hitbox = new RectangleHitbox(localPosition, width, height);
 
+            _entityData.Hitbox = hitbox;
             return this;
         }
         public Entity AddFriction(float decayRate)
         {
             _properties.Add(new Friction(decayRate));
+
+            return this;
+        }
+        public Entity AddFriction()
+        {
+            _properties.Add(new Friction());
+
+            return this;
+        }
+        public Entity AddAirResistance()
+        {
+            _properties.Add(new AirResistance());
+
+            return this;
+        }
+        public Entity AddAirResistance(float decayRate)
+        {
+            _properties.Add(new AirResistance(decayRate));
+
+            return this;
+        }
+        public Entity AddRandomMovement()
+        {
+            _properties.Add(new RandomMovement());
+
+            return this;
+        }
+        public Entity AddDebugVisuals()
+        {
+            _properties.Add(new DebugVisuals());
 
             return this;
         }

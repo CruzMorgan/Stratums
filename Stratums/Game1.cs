@@ -8,6 +8,7 @@ using System;
 using Stratums.Singletons;
 using System.Collections.Generic;
 using Stratums.HelperMethods;
+using Stratums.Entities.EntityPartitioning;
 
 namespace Stratums
 {
@@ -18,7 +19,8 @@ namespace Stratums
 
         private EntityBatch _entityBatch;
 
-        private Entity _dog;
+        private Entity _player;
+        private Entity _object;
 
         private Vector2 _camera;
 
@@ -30,14 +32,14 @@ namespace Stratums
             IsMouseVisible = true;
 
             _camera = new Vector2(-300, -100);
-            
+
         }
 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _entityBatch = new EntityBatch();
+            _entityBatch = new EntityBatch(2000, 2000, 5, 5);
 
             TextureMetadata.GetInstance().Load();
 
@@ -50,45 +52,59 @@ namespace Stratums
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _dog = new Entity(Content, _spriteBatch)
+            _player = new Entity(Content, _spriteBatch)
                 .AddInertia()
                 .AddAnimation("Magic_Dog_Run")
-                .AddHitbox(100, 100, true)
-                .AddCollider()
+                .AddHitbox(Vector2.Zero, 100, 100)
+                .AddFriction(0.9f)
+                .OverridePosition(new Vector2(-200, 0))
+                //.AddGravity()
+                .AddAirResistance()
+                .AddDebugVisuals()
                 ;
+            /*            _object = new Entity(Content, _spriteBatch)
+                            .AddAnimation("test")
+                            //.AddHitbox(Vector2.Zero, 100, 100)
+                            .OverridePosition(new Vector2(0, -100)
+                            );*/
 
-            int count = 1000;
-            for (int x = 1; x <= (int)Math.Sqrt(count); x++)
-            for (int y = 1; y <= (int)Math.Sqrt(count); y++)
+
+            for (int x = 0; x < 50; x++)
+            for (int y = 0; y < 50; y++)
             {
                 _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                    .AddAnimation("WhitePixel")
-                    .AddHitbox(10,10,true)
-                    .OverridePosition(x*50, y*50)
+                    .AddAnimation("test")
+                    .AddHitbox(Vector2.Zero, 100, 100)
+                    .OverridePosition(x * 99 - 50, y * 99)
+                    //.AddGravity()
+                    //.AddAirResistance()
+                    .AddRandomMovement()
+                    .AddFriction()
+                    .AddDebugVisuals()
+                    .AddInertia()
                     );
+
+            }
+            for (int x = 0; x < 50; x++)
+            for (int y = 0; y < 50; y++)
+            {
+                _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
+                    .AddAnimation("100x100Ball")
+                    .AddHitbox(Vector2.Zero, 50)
+                    .OverridePosition(x * 99, y * 99)
+                    //.AddGravity()
+                    //.AddAirResistance()
+                    .AddRandomMovement()
+                    .AddFriction()
+                    .AddDebugVisuals()
+                    .AddInertia()
+                    );
+
             }
 
-            _entityBatch.AddEntity( _dog );
+            _entityBatch.AddEntity( _player );
+            //_entityBatch.AddEntity(_object);
 
-            _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                .AddAnimation("test")
-                .AddInertia()
-                .OverridePosition(-300, -50)
-                .AddHitbox(100, 100, true)
-                .AddCollider()
-                );
-
-            _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                .OverridePosition(200, 40)
-                .AddHitbox(new List<Vector2>() { new Vector2 (30, 40), new Vector2 (-56, 105), new Vector2(-103, -10), new Vector2(73, -150)}, true)
-                .AddCollider()
-                );
-
-            _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
-                .OverridePosition(10, 400)
-                .AddHitbox(300, 500, true)
-                .AddCollider()
-                );
 
 
             // TODO: use this.Content to load your game content here
@@ -107,25 +123,25 @@ namespace Stratums
             if (Keyboard.GetState().IsKeyDown(Keys.Left)) { _camera += new Vector2(-cameraSpeed, 0); }
             if (Keyboard.GetState().IsKeyDown(Keys.Down)) { _camera += new Vector2(0, cameraSpeed); }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) { _dog.OverrideTranslatePosition(0, speed); }
-            if (Keyboard.GetState().IsKeyDown(Keys.A)) { _dog.OverrideTranslatePosition(-speed, 0); }
-            if (Keyboard.GetState().IsKeyDown(Keys.S)) { _dog.OverrideTranslatePosition(0, -speed); }
-            if (Keyboard.GetState().IsKeyDown(Keys.D)) { _dog.OverrideTranslatePosition(speed, 0); }
+            if (Keyboard.GetState().IsKeyDown(Keys.W)) { _player.InfluenceVelocity(0, speed); }
+            if (Keyboard.GetState().IsKeyDown(Keys.A)) { _player.InfluenceVelocity(-speed, 0); }
+            if (Keyboard.GetState().IsKeyDown(Keys.S)) { _player.InfluenceVelocity(0, -speed); }
+            if (Keyboard.GetState().IsKeyDown(Keys.D)) { _player.InfluenceVelocity(speed, 0); }
 
             _entityBatch.Update(gameTime);
-
-            // TODO: Add your update logic here
-
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            GraphicsDevice.Clear(new Color(_player.GetEntityData().Position.X / 30000 + 0.5f, ((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) / 2 + 0.5f) / 5, _player.GetEntityData().Position.Y / 30000 + 0.5f));
 
             _spriteBatch.Begin();
 
-            _entityBatch.Draw(_camera);
+            _entityBatch.Draw(_player.GetEntityData().Position.InvertY() + _camera);
+
+            _spriteBatch.DrawString(Debugger.Font, $"FPS = {1f / (float)gameTime.ElapsedGameTime.TotalSeconds}\n Pos = {_player.GetEntityData().Position}", Vector2.Zero, Color.White);
 
             _spriteBatch.End();
             // TODO: Add your drawing code here

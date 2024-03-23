@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Stratums.Entities;
-using Stratums.Properties;
+using Stratums.Properties.Hitbox;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,8 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stratums.HelperMethods
+namespace Stratums.Z_REMOVING
 {
+    /*
     public static class EntityPartition
     {
         /// <param name="entity"></param>
@@ -67,4 +68,5 @@ namespace Stratums.HelperMethods
         }
 
     }
+    */
 }

@@ -1,4 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿/////////////////////////////////////////////////////////
+//
+//
+// NOTE: BEFORE TRASHING, SALVAGE THE RENDERDATA METHOD
+//
+//
+////////////////////////////////////////////////////////////
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stratums.Rendering;
 using System;
@@ -11,9 +18,10 @@ using System.Threading.Tasks;
 using Stratums.HelperMethods;
 using Stratums.Entities;
 
-namespace Stratums.Properties
+namespace Stratums.Z_REMOVING
 {
-    public class Hitbox : Property
+    /*
+    public class OldHitbox : Property
     {
         private List<Vector2> _vertices;
 
@@ -30,7 +38,7 @@ namespace Stratums.Properties
         public float GetRadius() { return _radius; }
         public Vector2 GetCenter() { return _centerOfHitbox; }
 
-        public Hitbox(List<Vector2> vertices, bool debugMode)
+        public OldHitbox(List<Vector2> vertices, bool debugMode)
         {
             _vertices = vertices;
 
@@ -43,7 +51,7 @@ namespace Stratums.Properties
 
             for (int i = 0; i < _vertices.Count; i++)
             {
-                testedDist = (float)_centerOfHitbox.GetDistBetwCoords(_vertices[i]);
+                testedDist = (float)_centerOfHitbox.Dist(_vertices[i]);
 
                 if (_radius < testedDist)
                 {
@@ -95,7 +103,7 @@ namespace Stratums.Properties
             for (int i = 0; i < _vertices.Count; i++)
             {
                 var nextVertex = (i + 1) % _vertices.Count;
-                var distBetwCoords = (int)_vertices[i].GetDistBetwCoords(_vertices[nextVertex]);
+                var distBetwCoords = (int)_vertices[i].Dist(_vertices[nextVertex]);
 
                 //Gets the render data for each line in the polygon
                 fullhitbox[i] = new RenderData()
@@ -106,7 +114,7 @@ namespace Stratums.Properties
 
                     DestinationRectangle = new Rectangle((int)_vertices[i].X, -(int)_vertices[i].Y, Debugger.DebugTexture.Width, distBetwCoords),
 
-                    Rotation = _vertices[i].GetAngleFromCoord(_vertices[nextVertex]) + (float)Math.PI / 2f,
+                    Rotation = _vertices[i].GetAngleFromCoordForRenderData(_vertices[nextVertex]) + (float)Math.PI / 2f,
 
                     Origin = Vector2.Zero,
 
@@ -121,9 +129,9 @@ namespace Stratums.Properties
 
                 SourceRectangle = new Rectangle(0, 0, Debugger.DebugTexture.Width, Debugger.DebugTexture.Height),
 
-                DestinationRectangle = new Rectangle((int)_centerOfHitbox.X, -(int)_centerOfHitbox.Y, Debugger.DebugTexture.Width, (int)_centerOfHitbox.GetDistBetwCoords(_vertices[_radiusIndex])),
+                DestinationRectangle = new Rectangle((int)_centerOfHitbox.X, -(int)_centerOfHitbox.Y, Debugger.DebugTexture.Width, (int)_centerOfHitbox.Dist(_vertices[_radiusIndex])),
 
-                Rotation = _centerOfHitbox.GetAngleFromCoord(_vertices[_radiusIndex]) + (float)Math.PI / 2f,
+                Rotation = _centerOfHitbox.GetAngleFromCoordForRenderData(_vertices[_radiusIndex]) + (float)Math.PI / 2f,
 
                 Origin = Vector2.Zero,
 
@@ -155,4 +163,5 @@ namespace Stratums.Properties
             return new Vector2(x, y);
         }
     }
+    */
 }

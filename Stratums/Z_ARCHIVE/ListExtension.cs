@@ -1,11 +1,11 @@
-﻿using Stratums.Entities;
+﻿/*using Stratums.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stratums.HelperMethods
+namespace Stratums.Z_REMOVING
 {
     public static class ListExtension
     {
@@ -14,20 +14,20 @@ namespace Stratums.HelperMethods
             List<T> simplified = new List<T>();
 
             foreach (var outerType in initial)
-            foreach (var innerType in outerType)
-            {
-                if (!simplified.Contains(innerType))
+                foreach (var innerType in outerType)
                 {
-                    simplified.Add(innerType);
+                    if (!simplified.Contains(innerType))
+                    {
+                        simplified.Add(innerType);
+                    }
                 }
-            }
 
             return simplified;
         }
 
         public static List<T> AddWithoutRepeats<T>(this List<T> current, List<T> adding)
         {
-            foreach (var item in adding) 
+            foreach (var item in adding)
             {
                 if (!current.Contains(item))
                 {
@@ -71,3 +71,4 @@ namespace Stratums.HelperMethods
         }
     }
 }
+*/

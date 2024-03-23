@@ -11,8 +11,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Stratums.HelperMethods
+namespace Stratums.Z_REMOVING
 {
+    /*
     public static class CollisionHelp
     {
         /// <summary>
@@ -27,14 +28,16 @@ namespace Stratums.HelperMethods
             current.OverrideTranslatePosition(current.GetEntityData().Position);
             other.OverrideTranslatePosition(other.GetEntityData().Position);
 
-            EntityCollisionData collisionData = current.CalculateEntityCollisions(other);
+            //EntityCollisionData collisionData = current.CalculateEntityCollisions(other);
 
             if (collisionData.IsThereCollisionData())
             {
-                current.
+                //current.
             }
 
             return moveTo;
         }
+        //TEMPORARY LOCATION FOR METHOD:
     }
+    */
 }

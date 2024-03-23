@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stratums.Entities;
-using Stratums.HelperMethods;
+using Stratums.Entities.EntityPartitioning;
 using Stratums.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,11 @@ namespace Stratums.Properties
     {
         float _decayRate;
 
+        public Friction()
+        {
+            _decayRate = 0.9f;
+        }
+
         public Friction(float decayRate) 
         {
             _decayRate = decayRate;
@@ -24,12 +30,13 @@ namespace Stratums.Properties
         {
             return Array.Empty<RenderData>();
         }
-
+        
         public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
         {
-            var insertVariableNameHere = (entityData.Velocity * -_decayRate) - entityData.Velocity;
-
-            entityData.Velocity += insertVariableNameHere * (float)deltaTime.ElapsedGameTime.TotalSeconds;
+            if (entityData.HostEntity.IsColliding())
+            {
+                entityData.Velocity *= _decayRate;
+            }
         }
     }
 }

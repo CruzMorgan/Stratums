@@ -9,8 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Stratums.Rendering;
 using Stratums.Entities;
-using Stratums.HelperMethods;
-
+using Stratums.Entities.EntityPartitioning;
 
 namespace Stratums.Properties
 {
@@ -25,6 +24,8 @@ namespace Stratums.Properties
 
 
         private Metadata _textureMetadata;
+
+        private Color _color;
 
         public Animation(ContentManager contentManager, string textureName)
         {
@@ -54,6 +55,8 @@ namespace Stratums.Properties
 
                 Origin = new Vector2(frameWidth / 2, _texture.Height / 2),
 
+                Color = _color
+
             };
 
             return new[] { renderData };
@@ -61,6 +64,8 @@ namespace Stratums.Properties
 
         public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
         {
+            _color = entityData.Color;
+
             _elapsedTime += (float)deltaTime.ElapsedGameTime.TotalSeconds;
 
             if (_elapsedTime >= 1f / _textureMetadata.FPS)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Stratums.Entities;
-using Stratums.HelperMethods;
+using Stratums.Entities.EntityPartitioning;
 using Stratums.Rendering;
 using System;
 using System.Collections.Generic;

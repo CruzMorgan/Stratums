@@ -19,7 +19,7 @@ namespace Stratums.Singletons
     {
         private static TextureMetadata _instance;
 
-        private const string FilePath = "C:\\Users\\cruph\\Documents\\Repositories\\MonoCode\\Stratums\\Stratums\\SaveData\\texture-metadata.csv";
+        private const string FilePath = "C:/Users/cruph/Documents/Repositories/MonoCode/Stratums/Stratums/SaveData/texture-metadata.csv";
 
         private readonly ConcurrentDictionary<string, Metadata> _textureMetadata;
 

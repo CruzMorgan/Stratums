@@ -12,15 +12,18 @@ namespace Stratums.Properties.Hitbox
     public class CircleHitbox : Hitbox
     {
         public float Radius { get; }
-
-        protected override Vector2 LocalPosition { get; }
-
-        public override Vector2 GlobalPosition { get; protected set; }
+        public override Tuple<Vector2, Vector2> Range 
+        { 
+            get; 
+            init; 
+        }
 
         public CircleHitbox(Vector2 localPosition, float radius)
         {
+            Range = new Tuple<Vector2, Vector2>(_localPosition.AddToEach(-Radius), _localPosition.AddToEach(Radius));
+
             Radius = radius;
-            LocalPosition = localPosition;
+            _localPosition = localPosition;
         }
 
         public override double CalculateDistanceToEdge(float angle)

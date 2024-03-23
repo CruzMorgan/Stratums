@@ -13,22 +13,22 @@ namespace Stratums.Properties.Hitbox
     {
         internal static bool CircleAndCircle(CircleHitbox circle1, CircleHitbox circle2)
         {
-            return circle1.GlobalPosition.Dist(circle2.GlobalPosition) <= circle1.Radius + circle2.Radius;
+            return circle1._globalPosition.Dist(circle2._globalPosition) <= circle1.Radius + circle2.Radius;
         }
 
         internal static bool CircleAndRectangle(CircleHitbox circle, RectangleHitbox rectangle)
         {
-            if (rectangle.IsPointWithinHitbox(circle.GlobalPosition))
+            if (rectangle.IsPointWithinHitbox(circle._globalPosition))
             {
                 return true;
             }
 
-            Vector2 minRange = new Vector2(rectangle.GlobalPosition.X - rectangle.Width / 2, rectangle.GlobalPosition.Y - rectangle.Height / 2);
-            Vector2 maxRange = new Vector2(rectangle.GlobalPosition.X + rectangle.Width / 2, rectangle.GlobalPosition.Y + rectangle.Height / 2);
+            Vector2 minRange = new Vector2(rectangle._globalPosition.X - rectangle.Width / 2, rectangle._globalPosition.Y - rectangle.Height / 2);
+            Vector2 maxRange = new Vector2(rectangle._globalPosition.X + rectangle.Width / 2, rectangle._globalPosition.Y + rectangle.Height / 2);
 
-            Vector2 closestPointToCircle = circle.GlobalPosition.Clamp(minRange, maxRange);
+            Vector2 closestPointToCircle = circle._globalPosition.Clamp(minRange, maxRange);
 
-            return circle.GlobalPosition.Dist(closestPointToCircle) <= circle.Radius;
+            return circle._globalPosition.Dist(closestPointToCircle) <= circle.Radius;
         }
 
         internal static bool RectangleAndRectangle(RectangleHitbox rectangle1, RectangleHitbox rectangle2)

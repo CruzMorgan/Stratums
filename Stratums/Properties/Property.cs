@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stratums.Entities;
-using Stratums.HelperMethods;
+using Stratums.Entities.EntityPartitioning;
 using Stratums.Rendering;
 
 namespace Stratums.Properties

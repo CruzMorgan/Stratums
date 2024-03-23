@@ -29,7 +29,8 @@ namespace Stratums.FileIO
                         {
                             textureMetadata.TryAdd
                             (
-                                name, new Metadata
+                                name, 
+                                new Metadata
                                 {
                                     Frames = frames,
                                     FPS = fps

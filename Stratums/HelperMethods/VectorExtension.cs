@@ -11,16 +11,20 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Net.Http.Headers;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace Stratums.HelperMethods
 {
     public static class VectorExtension
     {
-        public static float GetAngleFromCoord(this Vector2 startCoord, Vector2 destinationCoord)
-        {
-            var relativeCoordinate = startCoord - destinationCoord;
 
-            return (float)Math.Atan2(-relativeCoordinate.Y, relativeCoordinate.X);
+        public static double ToAngle(this Vector2 thisCoordinate, Vector2 otherCoordinate)
+        {
+            var relativeCoordinate = otherCoordinate - thisCoordinate;
+
+            var angle = Math.Atan2(relativeCoordinate.Y, relativeCoordinate.X) * (180 / Math.PI);
+
+            return angle < 0 ? 360 + angle : angle;
         }
         
         public static float GetAngleFromVector(this Vector2 vector)
@@ -33,7 +37,7 @@ namespace Stratums.HelperMethods
             return (float)Math.Atan2(current.Y, current.X);
         }
 
-        public static double GetDistBetwCoords(this Vector2 current, Vector2 compared) 
+        public static double Dist(this Vector2 current, Vector2 compared) 
         {
             return Math.Sqrt( Math.Pow(current.X - compared.X, 2) + Math.Pow(current.Y - compared.Y, 2) );
         }
@@ -89,6 +93,11 @@ namespace Stratums.HelperMethods
             return current * num;
         }
 
+        /// <summary>
+        /// Slow Calculation; avoid using in a spot that needs to be efficient
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns>Two Vectors representing the range of all vectors</returns>
         public static Tuple<Vector2, Vector2> RangeOfValues(this List<Vector2> points)
         {
             float minX = 0;
@@ -106,5 +115,63 @@ namespace Stratums.HelperMethods
 
             return new Tuple<Vector2, Vector2> ( new Vector2(minX, minY), new Vector2(maxX, maxY) );
         }
+
+        public static Vector2 Clamp(this Vector2 value, Vector2 min, Vector2 max)
+        {
+            return new Vector2(Math.Clamp(value.X, min.X, max.X), Math.Clamp(value.Y, min.Y, max.Y));
+        }
+
+        public static Vector2 InvertY(this Vector2 value)
+        {
+            return new Vector2(value.X, -value.Y);
+        }
+
+        public static Vector2 AddToEach(this Vector2 value1, float value2)
+        {
+            return new Vector2(value1.X + value2, value1.Y + value2);
+        }
+        public static Vector2 AddToEach(this Vector2 value1, float x, float y)
+        {
+            return new Vector2(value1.X + x, value1.Y + y);
+        }
+
+        public static byte QuadrantFromOrigin(this Vector2 value, Vector2 origin)
+        {
+            value -= origin;
+
+            if (value.X == 0)
+            {
+                value.X = 1;
+            }
+            if (value.Y == 0)
+            {
+                value.Y = 1;
+            }
+
+            value /= new Vector2(Math.Abs(value.X), Math.Abs(value.Y));
+
+
+            int toInt = (int)value.X * 10 + (int)value.Y;
+
+            switch (toInt)
+            {
+                case 11:
+                    return 1;
+
+                case -9:
+                    return 2;
+
+                case -11:
+                    return 3;
+
+                case 9:
+                    return 4;
+
+                default:
+                    Debug.Assert(false, "Should be unreachable");
+                    return 0;
+            }
+        }
+
     }
 }

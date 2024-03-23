@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Stratums.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Stratums.Properties.Hitbox;
 
 namespace Stratums.Entities
 {
@@ -13,7 +13,7 @@ namespace Stratums.Entities
     {
         public Entity HostEntity;
 
-        public List<Hitbox> Hitboxes;
+        public Hitbox Hitbox;
 
         public Vector2 Position;
         
@@ -22,5 +22,9 @@ namespace Stratums.Entities
         public SpriteEffects SpriteEffects;
         
         public float Mass;
+
+        public Color Color;
+
+        public bool IsColliding;
     }
 }

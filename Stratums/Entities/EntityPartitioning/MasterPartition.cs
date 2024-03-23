@@ -100,6 +100,7 @@ namespace Stratums.Entities.EntityPartitioning
             if (max == min)
             {
                 yield return min;
+                yield break;
             }
 
             for (int x = min.X; x <= max.X; x++)

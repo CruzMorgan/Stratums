@@ -64,15 +64,13 @@ namespace Stratums.Entities
             return ID;
         }
 
-        public void Update(GameTime deltaTime, EntityBatch entityBatch)
+        public void Update(GameTime deltaTime, bool isColliding)
         {
-            _entityData.IsColliding = IsColliding(entityBatch.CalculateAdjecentEntities(this));
-
-            Vector2 startPos = _entityData.Position;
-
+            _entityData.IsColliding = isColliding;
+            
             foreach (var property in _properties)
             {
-                property.OnUpdate(deltaTime, entityBatch, ref _entityData);
+                property.OnUpdate(deltaTime, ref _entityData);
             }
 
             _entityData.Hitbox.OnUpdate(_entityData.Position);

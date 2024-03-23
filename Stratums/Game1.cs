@@ -20,7 +20,6 @@ namespace Stratums
         private EntityBatch _entityBatch;
 
         private Entity _player;
-        private Entity _object;
 
         private Vector2 _camera;
 
@@ -62,11 +61,6 @@ namespace Stratums
                 .AddAirResistance()
                 .AddDebugVisuals()
                 ;
-            /*            _object = new Entity(Content, _spriteBatch)
-                            .AddAnimation("test")
-                            //.AddHitbox(Vector2.Zero, 100, 100)
-                            .OverridePosition(new Vector2(0, -100)
-                            );*/
 
 
             for (int x = 0; x < 50; x++)
@@ -85,7 +79,7 @@ namespace Stratums
                     );
 
             }
-            for (int x = 0; x < 50; x++)
+/*            for (int x = 0; x < 50; x++)
             for (int y = 0; y < 50; y++)
             {
                 _entityBatch.AddEntity(new Entity(Content, _spriteBatch)
@@ -100,7 +94,7 @@ namespace Stratums
                     .AddInertia()
                     );
 
-            }
+            }*/
 
             _entityBatch.AddEntity( _player );
             //_entityBatch.AddEntity(_object);
@@ -141,7 +135,7 @@ namespace Stratums
 
             _entityBatch.Draw(_player.GetEntityData().Position.InvertY() + _camera);
 
-            _spriteBatch.DrawString(Debugger.Font, $"FPS = {1f / (float)gameTime.ElapsedGameTime.TotalSeconds}\n Pos = {_player.GetEntityData().Position}", Vector2.Zero, Color.White);
+            _spriteBatch.DrawString(Debugger.Font, $"FPS = {1f / (float)gameTime.ElapsedGameTime.TotalSeconds}\nPos = {_player.GetEntityData().Position}", Vector2.Zero, Color.White);
 
             _spriteBatch.End();
             // TODO: Add your drawing code here

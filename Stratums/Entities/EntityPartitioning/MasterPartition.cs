@@ -99,15 +99,13 @@ namespace Stratums.Entities.EntityPartitioning
 
             if (max == min)
             {
-                for (int x = min.X; x <= max.X; x++)
-                for (int y = min.Y; y <= max.Y; y++)
-                {
-                    yield return new Point(x, y);
-                }
-            }
-            else
-            {
                 yield return min;
+            }
+
+            for (int x = min.X; x <= max.X; x++)
+            for (int y = min.Y; y <= max.Y; y++)
+            {
+                yield return new Point(x, y);
             }
         }
 

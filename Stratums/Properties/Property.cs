@@ -13,7 +13,7 @@ namespace Stratums.Properties
 {
     public abstract class Property
     {
-        public abstract void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData);
+        public abstract void OnUpdate(GameTime deltaTime, ref EntityData entityData);
         public abstract IEnumerable<RenderData> GetRenderData();
 
     }

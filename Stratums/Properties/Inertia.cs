@@ -19,13 +19,9 @@ namespace Stratums.Properties
             return Array.Empty<RenderData>();
         }
 
-        public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
+        public override void OnUpdate(GameTime deltaTime, ref EntityData entityData)
         {
-            entityBatch.RemoveEntityOnlyFromPartitions(entityData.HostEntity);
-
             entityData.Position += new Vector2(entityData.Velocity.X, entityData.Velocity.Y) * (float)deltaTime.ElapsedGameTime.TotalSeconds;
-
-            entityBatch.AddEntityOnlyToPartitions(entityData.HostEntity);
         }
     }
 }

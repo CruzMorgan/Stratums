@@ -173,10 +173,5 @@ namespace Stratums.HelperMethods
             }
         }
 
-        public static Point ToPoint(this Vector2)
-        {
-
-        }
-
     }
 }

@@ -31,7 +31,7 @@ namespace Stratums.Properties
             return Array.Empty<RenderData>();
         }
         
-        public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
+        public override void OnUpdate(GameTime deltaTime, ref EntityData entityData)
         {
             if (entityData.HostEntity.IsColliding())
             {

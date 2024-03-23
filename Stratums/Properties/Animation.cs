@@ -62,7 +62,7 @@ namespace Stratums.Properties
             return new[] { renderData };
         }
 
-        public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
+        public override void OnUpdate(GameTime deltaTime, ref EntityData entityData)
         {
             _color = entityData.Color;
 

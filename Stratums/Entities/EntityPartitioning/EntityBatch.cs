@@ -41,7 +41,9 @@ namespace Stratums.Entities.EntityPartitioning
         {
             foreach (Entity entity in Entities)
             {
-                entity.Update(gameTime, this);
+                _masterPartition.RemoveEntity(entity);
+                entity.Update(gameTime, entity.IsColliding(CalculateAdjecentEntities(entity)));
+                _masterPartition.AddEntity(entity);
             }
         }
 
@@ -60,18 +62,9 @@ namespace Stratums.Entities.EntityPartitioning
             _masterPartition.AddEntity(entity);
         }
 
-        public void AddEntityOnlyToPartitions(Entity entity)
-        {
-            _masterPartition.AddEntity(entity);
-        }
-
         public void RemoveEntity(Entity entity)
         {
             Entities.Remove(entity);
-            _masterPartition.RemoveEntity(entity);
-        }
-        public void RemoveEntityOnlyFromPartitions(Entity entity)
-        {
             _masterPartition.RemoveEntity(entity);
         }
     }

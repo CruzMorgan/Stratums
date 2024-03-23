@@ -32,7 +32,7 @@ namespace Stratums.Properties
             return Array.Empty<RenderData>();
         }
 
-        public override void OnUpdate(GameTime deltaTime, EntityBatch entityBatch, ref EntityData entityData)
+        public override void OnUpdate(GameTime deltaTime, ref EntityData entityData)
         {
             entityData.Velocity.Y -= _gravitationalAcceleration * (float)deltaTime.ElapsedGameTime.TotalSeconds * PixelsPerMeter;
         }

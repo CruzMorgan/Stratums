@@ -12,18 +12,18 @@ namespace Stratums.Entities.EntityPartitioning
 {
     internal class MasterPartition
     {
-        private Dictionary<Vector2, PartitionBranch> _partitions;
+        private Dictionary<Point, PartitionBranch> _partitions;
 
         private int _proximityCap;
         private int _depthCap;
 
-        private Vector2 dimensions;
+        private Point _dimensions;
 
         public MasterPartition(int width, int height, int proximityCap, int depthCap) 
         {
-            _partitions = new Dictionary<Vector2, PartitionBranch>();
+            _partitions = new Dictionary<Point, PartitionBranch>();
 
-            dimensions = new Vector2(width, height);
+            _dimensions = new Point(width, height);
 
             _proximityCap = proximityCap;
             _depthCap = depthCap;
@@ -31,12 +31,10 @@ namespace Stratums.Entities.EntityPartitioning
 
         public void AddEntity(Entity entity)
         {
-            IEnumerable<Vector2> partitionIndexes = CalculatePartitionIndexes(entity);
+            IEnumerable<Point> partitionIndexes = CalculatePartitionIndexes(entity);
 
-            if (partitionIndexes.Count() == 1)
+            foreach (Point partitionIndex in partitionIndexes)
             {
-                Vector2 partitionIndex = partitionIndexes.First();
-
                 if (!_partitions.ContainsKey(partitionIndex))
                 {
                     CreatePartition(partitionIndex);
@@ -44,42 +42,16 @@ namespace Stratums.Entities.EntityPartitioning
 
                 _partitions[partitionIndex].InsertEntity(entity);
             }
-            else
-            {
-                foreach (Vector2 partitionIndex in partitionIndexes)
-                {
-                    if (!_partitions.ContainsKey(partitionIndex))
-                    {
-                        CreatePartition(partitionIndex);
-                    }
 
-                    _partitions[partitionIndex].InsertEntity(entity);
-                }
-
-            }
         }
 
         public bool RemoveEntity(Entity entity) 
         {
-            IEnumerable<Vector2> partitionIndexes = CalculatePartitionIndexes(entity);
+            IEnumerable<Point> partitionIndexes = CalculatePartitionIndexes(entity);
 
             bool isEntityFound = false;
 
-            if (partitionIndexes.Count() == 1)
-            {
-                Vector2 partitionIndex = partitionIndexes.First();
-
-                isEntityFound = _partitions[partitionIndex].RemoveEntity(entity);
-
-                if (_partitions[partitionIndex].GetAllEntities().Count == 0)
-                {
-                    _partitions.Remove(partitionIndex);
-                }
-
-                return isEntityFound;
-            }
-
-            foreach(Vector2 partitionIndex in partitionIndexes)
+            foreach(Point partitionIndex in partitionIndexes)
             {
                 if (!_partitions[partitionIndex].RemoveEntity(entity))
                 {
@@ -97,16 +69,11 @@ namespace Stratums.Entities.EntityPartitioning
 
         public List<Entity> GetEntitiesInPartitionBranch(Entity entity)
         {
-            IEnumerable<Vector2> partitionIndexes = CalculatePartitionIndexes(entity);
-
-            if (partitionIndexes.Count() == 1)
-            {
-                return _partitions[partitionIndexes.First()].GetEntitiesInSamePartition(entity);
-            }
+            IEnumerable<Point> partitionIndexes = CalculatePartitionIndexes(entity);
 
             List<Entity> entities = new List<Entity>();
 
-            foreach (Vector2 partitionIndex in partitionIndexes)
+            foreach (Point partitionIndex in partitionIndexes)
             foreach (Entity subEntity in _partitions[partitionIndex].GetEntitiesInSamePartition(entity))
             {
                 entities.Add(subEntity);
@@ -115,29 +82,29 @@ namespace Stratums.Entities.EntityPartitioning
             return entities;
         }
 
-        private void CreatePartition(Vector2 partitionIndex)
+        private void CreatePartition(Point partitionIndex)
         {
-            Vector2 minRange = partitionIndex * dimensions;
-            Vector2 maxRange = partitionIndex * dimensions + dimensions;
+            Vector2 minRange = (partitionIndex * _dimensions).ToVector2();
+            Vector2 maxRange = (partitionIndex * _dimensions + _dimensions).ToVector2();
 
             PartitionBranch partition = new PartitionBranch(minRange, maxRange, 0, _proximityCap, _depthCap);
 
             _partitions.Add(partitionIndex, partition);
         }
 
-        private IEnumerable<Vector2> CalculatePartitionIndexes(Entity entity)
+        private IEnumerable<Point> CalculatePartitionIndexes(Entity entity)
         {
-            Vector2 min = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item1 + entity.GetEntityData().Position);
-            Vector2 max = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item2 + entity.GetEntityData().Position);
+            Point min = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item1.ToPoint() + entity.GetEntityData().Position.ToPoint());
+            Point max = CalculatePartitionIndex(entity.GetEntityData().Hitbox.Range.Item2.ToPoint() + entity.GetEntityData().Position.ToPoint());
 
-            if (max - min != Vector2.Zero)
+            if (max == min)
             {
-                int width = (int)(max.X - min.X + 1);
-                int height = (int)(max.Y - min.Y + 1);
+                int width = max.X - min.X + 1;
+                int height = max.Y - min.Y + 1;
 
                 for (int i = 0; i < width * height; i++)
                 {
-                    yield return new Vector2(i % width + min.X, i / height + min.Y);
+                    yield return new Point(i % width + min.X, i / height + min.Y);
                 }
             }
             else
@@ -146,9 +113,9 @@ namespace Stratums.Entities.EntityPartitioning
             }
         }
 
-        private Vector2 CalculatePartitionIndex(Vector2 pos)
+        private Point CalculatePartitionIndex(Point pos)
         {
-            return (pos / dimensions).Rounded();
+            return pos / _dimensions;
         }
 
     }

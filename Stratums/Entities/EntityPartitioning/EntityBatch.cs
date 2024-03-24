@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Graphics;
+using Stratums.Rendering;
 
 namespace Stratums.Entities.EntityPartitioning
 {
@@ -55,7 +57,23 @@ namespace Stratums.Entities.EntityPartitioning
             }
         }
 
-        /// <summary> Declare "AddEntity()" in LoadContent() </summary>
+        public void DrawPartitions(SpriteBatch spriteBatch)
+        {
+
+
+            spriteBatch.Draw
+            (
+                data.Texture,
+                data.SourceRectangle,
+                data.DestinationRectangle,
+                data.Color,
+                data.Rotation,
+                data.Origin,
+                SpriteEffects.None,
+                0f
+            );
+        }
+
         public void AddEntity(Entity entity)
         {
             Entities.Add(entity);

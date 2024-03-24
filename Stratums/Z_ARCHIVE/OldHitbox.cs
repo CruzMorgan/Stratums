@@ -109,7 +109,7 @@ namespace Stratums.Z_REMOVING
                 fullhitbox[i] = new RenderData()
                 {
                     Texture = Debugger.DebugTexture,
-
+    
                     SourceRectangle = new Rectangle(0, 0, Debugger.DebugTexture.Width, Debugger.DebugTexture.Height),
 
                     DestinationRectangle = new Rectangle((int)_vertices[i].X, -(int)_vertices[i].Y, Debugger.DebugTexture.Width, distBetwCoords),

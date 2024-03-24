@@ -70,7 +70,7 @@ namespace Stratums.Entities.EntityPartitioning
             List<Entity> entities = new List<Entity>();
 
             foreach (Point partitionIndex in partitionIndexes)
-            foreach (Entity subEntity in _partitions[partitionIndex].GetEntitiesInSamePartition(entity))
+            foreach (Entity subEntity in _partitions[partitionIndex].GetEntitiesInProximity(entity))
             {
                 entities.Add(subEntity);
             }

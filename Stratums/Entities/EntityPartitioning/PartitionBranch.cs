@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Stratums.Entities.EntityPartitioning
 {
@@ -54,9 +56,16 @@ namespace Stratums.Entities.EntityPartitioning
         {
             if (_subBranches != null)
             {
-                int subBranchIndex = CalculateSubBranchIndex(entity);
+                int? subBranchIndex = CalculateSubBranchIndex(entity);
 
-                _subBranches[subBranchIndex].InsertEntity(entity);
+                if (subBranchIndex != null)
+                {
+                    _subBranches[subBranchIndex.Value].InsertEntity(entity);
+                }
+                else
+                {
+                    _entities.Add(entity);
+                }
 
             }
             else if (_entities.Count > _proximityCap && _depth < _depthCap)
@@ -80,9 +89,12 @@ namespace Stratums.Entities.EntityPartitioning
 
             if (!isEntityFound && _subBranches != null)
             {
-                int subBranchIndex = CalculateSubBranchIndex(entity);
+                int? subBranchIndex = CalculateSubBranchIndex(entity);
 
-                isEntityFound = _subBranches[subBranchIndex].RemoveEntity(entity);
+                if (subBranchIndex != null)
+                {
+                    isEntityFound = _subBranches[subBranchIndex.Value].RemoveEntity(entity);
+                }
             }
 
             if (_subBranches != null && _entities.Count <= _proximityCap)
@@ -109,16 +121,28 @@ namespace Stratums.Entities.EntityPartitioning
             return allEntities;
         }
 
-        public List<Entity> GetEntitiesInSamePartition(Entity entity)
+        public List<Entity> GetEntitiesInProximity(Entity entity)
         {
-            if (_subBranches != null)
+            if (_subBranches == null)
             {
-                int subBranchIndex = CalculateSubBranchIndex(entity);
+                return _entities;
+            }
+            
+            List<Entity> entitiesInProximity = new List<Entity>();
 
-                return _subBranches[subBranchIndex].GetEntitiesInSamePartition(entity);
+            int? subBranchIndex = CalculateSubBranchIndex(entity);
+
+            if (subBranchIndex != null)
+            {
+                entitiesInProximity = _subBranches[subBranchIndex.Value].GetEntitiesInProximity(entity);
             }
 
-            return _entities;
+            foreach (Entity subEntity in _entities)
+            {
+                entitiesInProximity.Add(subEntity);
+            }
+
+            return entitiesInProximity;
         }
 
         private void DividePartition()
@@ -132,14 +156,16 @@ namespace Stratums.Entities.EntityPartitioning
                 new PartitionBranch(new Vector2(_center.X, _minRange.Y), new Vector2(_maxRange.X, _center.Y), _depth + 1)
             };
 
-            foreach (Entity subEntity in _entities)
+            for (int i = _entities.Count - 1; i >= 0; i--)
             {
-                int subBranchIndex = CalculateSubBranchIndex(subEntity);
+                int? subBranchIndex = CalculateSubBranchIndex(_entities[i]);
 
-                _subBranches[subBranchIndex].InsertEntity(subEntity);
+                if (subBranchIndex != null)
+                {
+                    _subBranches[subBranchIndex.Value].InsertEntity(_entities[i]);
+                    _entities.Remove(_entities[i]);
+                }
             }
-
-            _entities.Clear();
         }
 
         private void DissolveSubPartitions()
@@ -148,14 +174,20 @@ namespace Stratums.Entities.EntityPartitioning
             _subBranches = null;
         }
 
-        private int CalculateSubBranchIndex(Entity entity)
+        /// <param name="entity"></param>
+        /// <returns>Index of the sub branch the entity should go in, or null if it should go in multiple.</returns>
+        private int? CalculateSubBranchIndex(Entity entity)
         {
-            Vector2 entityPosition = entity.GetEntityData().Position;
+            int min = (entity.GetEntityData().Hitbox.Range.Item1 + entity.GetEntityData().Position).QuadrantFromOrigin(_center);
+            int max = (entity.GetEntityData().Hitbox.Range.Item2 + entity.GetEntityData().Position).QuadrantFromOrigin(_center);
 
-            int subBranchIndex = entityPosition.QuadrantFromOrigin(_center) - 1;
 
-            return subBranchIndex;
+            if (min == max)
+            {
+                return min - 1;
+            }
 
+            return null;
         }
 
     }
